@@ -1,0 +1,19 @@
+---
+- name: Multiloop playbook
+  hosts: all
+  become: yes
+  tasks:
+    - name: install servers
+      yum: 
+        name: "{{item.x}}"
+        state: "{{item.y}}"
+      with_items:
+        - {x: httpd, y: latest}
+        - {x: git, y: latest}
+        - {x: tree, y: latest}    
+    - name: start server
+      service:
+          name: "{{item.x}}"
+          state: "{{item.y}}"
+      with_items:
+          - {x: httpd, y: started}    
