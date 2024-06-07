@@ -1,0 +1,6 @@
+---
+- name: restarted httpd server
+  service:
+    name: httpd
+    state: restarted
+# handlers file for first_role

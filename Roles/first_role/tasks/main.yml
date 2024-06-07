@@ -1,0 +1,8 @@
+---
+- name: call all playbooks
+  include_tasks: "{{item}}"
+  with_items:
+      - child_install.yml
+      - child_start.yml
+      - child_copy.yml
+# tasks file for first_role
