@@ -1,0 +1,12 @@
+---
+- name: loop playbook
+  hosts: all
+  become: yes
+  tasks:
+    - name: install multiloop software
+      yum: 
+        name: "{{item}}"
+        state: latest
+      with_items: 
+         - httpd
+         - git  
