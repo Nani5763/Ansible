@@ -1,0 +1,115 @@
+## Dynamic inventory file process ## 
+
+Prerequistes 
+
+python3
+
+boto3
+
+==== Install python and boto3 ====
+
+yum update -y #update 
+
+yum install python -y # install python
+
+----install pip
+
+wget https://bootstrap.pypa.io/get-pip.py #download pip
+
+python get-pip.py  #install pip
+
+---install boto3
+
+pip install boto3  #to install boto3 
+
+pip show boto3     #to verify boto3
+
+
+You might already have this collection installed if you are using the ansible package. It is not included in ansible-core. To check whether it is installed, run ansible-galaxy collection list.
+
+To install it, use: ansible-galaxy collection install amazon.aws. You need further requirements to be able to use this inventory plugin, see Requirements for details.
+
+To use it in a playbook, specify: amazon.aws.aws_ec2.
+
+
+
+sudo vi /etc/ansible/ansible.cfg
+
+[defaults]
+enable_plugins = aws_ec2
+inventory =./aws_ec2.yml
+host_key_checking = False
+
+sudo vi /etc/ansible/aws_ec2.yml
+
+
+---
+plugin: amazon.aws.aws_ec2
+regions:
+  - ap-southeast-1
+filters:
+  tag:Name: 
+    - dev
+      #add multiple tag names here if required
+
+
+# for all
+
+# if we want to add inventory groups 
+
+keyed_groups:
+  # add hosts to tag_Name_value groups for each aws_ec2 host's tags.Name variable.
+  - key: tags.Name
+    prefix: tag_Name_
+    separator: ""
+groups:
+  # add hosts to the group dev if any of the dictionary's keys or values is the word 'dev'.
+  development: 'dev' in (tags|list)"
+filters:
+  tag:Name:
+    - 'dev'    
+
+ansible-inventory -i aws_ec2.yml --list
+
+ansible-inventory -i aws_ec2.yml --graph
+
+
+sample playbook inventory all no without group
+
+---
+- name: first playbook
+  hosts: all
+  become: yes
+  tasks:
+    - name: install httpd software
+      yum:
+        name: httpd
+        state: latest
+    - name: start web server
+      service:
+        name: httpd
+        state: started
+
+
+
+ 
+
+sample playbook with inventory group
+
+---
+- name: first playbook
+  hosts: tag_Name_dev
+  become: yes
+  tasks:
+    - name: install httpd software
+      yum:
+        name: httpd
+        state: latest
+    - name: start web server
+      service:
+        name: httpd
+        state: started      
+
+
+Reference ansible offcial document
+https://docs.ansible.com/ansible/latest/collections/amazon/aws/docsite/aws_ec2_guide.html
